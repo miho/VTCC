@@ -63,6 +63,5 @@ public class TCCTest {
         String lineEnding = System.getProperty("line.separator");
 
         Assert.assertEquals("Hello, World!"+lineEnding, output);
-
     }
 }
