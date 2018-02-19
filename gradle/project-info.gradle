@@ -2,7 +2,7 @@
 // publishing information
 // -----------------------------------------------------------------------------
 ext.publishing.artifactId =  project.name.toLowerCase()
-ext.publishing.groupId    =  'eu.mihosoft.appx.vappx'
+ext.publishing.groupId    =  'eu.mihosoft.vtcc'
 ext.publishing.versionId  =  '2018.1.1'
 
 ext.publishing.developerName         = 'Michael Hoffer'
