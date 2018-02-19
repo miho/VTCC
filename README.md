@@ -1,6 +1,6 @@
 # VTCC
 
-[ ![Download](https://api.bintray.com/packages/miho/TCC/VTCC/images/download.svg) ](https://bintray.com/miho/TCC/VTCC/_latestVersion)
+[ ![Download](https://api.bintray.com/packages/miho/TCC/VTCC/images/download.svg) ](https://bintray.com/miho/TCC/VTCC/_latestVersion) [![Build status](https://ci.appveyor.com/api/projects/status/862o08c4bwgdyafp?svg=true)](https://ci.appveyor.com/project/miho/vtcc) [![Build Status](https://travis-ci.org/miho/VTCC.svg?branch=master)](https://travis-ci.org/miho/VTCC)
 
 Compile and Run C code from Java via embedded [TCC](https://bellard.org/tcc/) Compiler (Works on Linux, Windows and macOS)
 
