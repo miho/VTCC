@@ -4,6 +4,10 @@ sudo: false
 #    packages:
 #      - oracle-java8-installer
 
+os:
+  - linux
+  - osx
+
 language: java
 
 #install: true
