@@ -1,0 +1,17 @@
+sudo: false
+addons:
+  apt:
+    packages:
+      - oracle-java8-installer
+language: java
+install: true
+jdk: oraclejdk8
+
+before_script:
+  - bash ./gradlew --version
+  
+script:
+    - bash ./gradlew clean build test -S
+    
+#after_success:
+#  - TERM=dumb ./gradlew test jacocoTestReport jacocoRootReport coveralls -S
