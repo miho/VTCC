@@ -220,7 +220,7 @@ public class CInterpreterImpl implements CInterpreter {
 
             args = new String[]{"-B"+tccFolder+"\\lib\\;"+tccFolder,"-L"+tccFolder+"\\lib\\;"+tccFolder,
                     "-I" +tccFolder+"\\include\\libc;"+tccFolder+"\\include;" + tccFolder + "\\lib\\tcc\\include\\",
-                    "-nostdinc",
+                    "-nostdinc", 
                     "-llibtcc",
                     "-run", scriptFile.toAbsolutePath().toString()};
 
