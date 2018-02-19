@@ -6,7 +6,7 @@ sudo: false
 
 os:
   - linux
-  - osx
+ # - osx
 
 language: java
 
