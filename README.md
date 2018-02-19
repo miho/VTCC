@@ -29,7 +29,7 @@ CInterpreter.execute(new File("main.c")).print(System.out,System.err);
 To wait until the execution has finished, use the `waitFor()` method:
 ```java
 // execute main.c with working directory "exampleDir"
-CInterpreter.execute(exampleDir, new File(exampleDir, "main.c")).waitFor();
+CInterpreter.execute(new File("main.c")).waitFor();
 ```
 The exit value can be accessed via:
 ```java
