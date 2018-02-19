@@ -18,13 +18,13 @@ CInterpreter.execute(exampleDir, code);
 ```
 To execute a specified C script, use:
 ```java
-// execute main.c with working directory "exampleDir"
-CInterpreter.execute(exampleDir, new File(exampleDir, "main.c"));
+// execute main.c
+CInterpreter.execute(new File("main.c"));
 ```
 To print the output to given print streams, use the `print(...)` method:
 ```java
-// execute main.c with working directory "exampleDir"
-CInterpreter.execute(exampleDir, new File(exampleDir, "main.c")).print(System.out,System.err);
+// execute main.c
+CInterpreter.execute(new File("main.c")).print(System.out,System.err);
 ```
 To wait until the execution has finished, use the `waitFor()` method:
 ```java
@@ -34,12 +34,12 @@ CInterpreter.execute(exampleDir, new File(exampleDir, "main.c")).waitFor();
 The exit value can be accessed via:
 ```java
 // execute main.c with working directory "exampleDir"
-CInterpreter.execute(exampleDir, new File(exampleDir, "main.c")).getProcess().exitValue();
+CInterpreter.execute(new File("main.c")).getProcess().exitValue();
 ```
 To destroy the current process, the `destroy()`method can be used:
 ```java
-// execute main.c with working directory "exampleDir"
-CInterpreter.execute(exampleDir, new File(exampleDir, "main.c")).destroy();
+// execute main.c
+CInterpreter.execute(new File("main.c")).destroy();
 ```
 
 ## How to Build VTCC
