@@ -1,0 +1,25 @@
+// -----------------------------------------------------------------------------
+// publishing information
+// -----------------------------------------------------------------------------
+ext.publishing.artifactId =  project.name.toLowerCase()
+ext.publishing.groupId    =  'eu.mihosoft.appx.vappx'
+ext.publishing.versionId  =  '2017.1.1'
+
+ext.publishing.developerName         = 'Michael Hoffer'
+ext.publishing.developerAlias        = 'miho'
+ext.publishing.developerEmail        = 'info@michaelhoffer.de'
+ext.publishing.inceptionYear         = '2017'
+
+ext.publishing.bintray.repo          = 'Appx'
+ext.publishing.bintray.userOrg       = 'miho'
+ext.publishing.bintray.name          = project.name
+
+ext.publishing.desc                  = 'Appx utility library to generate Appx installation packages'
+ext.publishing.license               = 'BSD 2-Clause'
+ext.publishing.licenseUrl            = 'https://github.com/miho/VUGShell/blob/master/LICENSE'
+ext.publishing.labels                = ['appx', 'UWP', 'java', 'Windows 10', 'vrl','vrl-studio']
+ext.publishing.websiteUrl            = 'https://github.com/miho/VAppx'
+ext.publishing.issueTrackerUrl       = 'https://github.com/miho/VAppx/issues'
+ext.publishing.vcsUrl                = 'git@github.com:miho/VAppx.git'
+
+ext.publishing.pomName               =  ext.publishing.artifactId

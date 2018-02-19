@@ -1,0 +1,42 @@
+plugins {
+//    id 'com.github.hierynomus.license' version '0.13.1'
+    id 'maven-publish'
+    id 'net.nemerosa.versioning' version '2.4.0'
+    id 'com.jfrog.bintray' version '1.7.2'
+    id 'com.github.ben-manes.versions' version '0.13.0'
+}
+
+apply plugin: 'java'
+apply from: 'gradle/publishing.gradle'
+
+sourceCompatibility = '1.8'
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+tasks.withType(Javadoc) {
+    options.addStringOption('Xdoclint:none', '-quiet')
+}
+
+task wrapper(type: Wrapper, description: 'Creates and deploys the Gradle wrapper to the current directory.') {
+    gradleVersion = '4.5.1'
+}
+
+//if (!hasProperty('mainClass')) {
+//    ext.mainClass = 'eu.mihosoft.ugshell.Main'
+//}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+    jcenter()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.10'
+    testCompile group: 'eu.mihosoft.tcc.tccdist', name: 'tcc-dist', version: '2018.1.0'
+}
+
+//task run(type: JavaExec) {
+//    classpath = sourceSets.main.runtimeClasspath
+//    main = mainClass;
+//    jvmArgs = ['-Dprism.forceGPU=true', '-Dprism.verbose=true', '-Dprism.order=es2,d3d,sw']
+//}
