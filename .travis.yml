@@ -11,7 +11,7 @@ before_script:
   - bash ./gradlew --version
   
 script:
-    - bash ./gradlew clean build test -S
+    - bash ./gradlew clean build test
     
 #after_success:
 #  - TERM=dumb ./gradlew test jacocoTestReport jacocoRootReport coveralls -S
