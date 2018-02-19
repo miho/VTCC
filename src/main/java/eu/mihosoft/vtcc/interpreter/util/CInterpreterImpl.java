@@ -26,6 +26,8 @@ public class CInterpreterImpl implements CInterpreter {
     private static File tccRootPath;
     private final Process tccProcess;
     private static boolean initialized;
+    private StreamGobbler errorGobbler;
+    private StreamGobbler stdGobbler;
 
     private final List<File> includeFolders = new ArrayList<>();
     private final List<File> libraryFolders = new ArrayList<>();
@@ -55,7 +57,7 @@ public class CInterpreterImpl implements CInterpreter {
 
             Path confDir
                     = Paths.get(System.getProperty("user.home"), ".vtcc").
-                            toAbsolutePath();
+                    toAbsolutePath();
             Path distDir = Paths.get(confDir.toString(), "tcc-dist");
             File base = confDir.toFile();
 
@@ -84,12 +86,12 @@ public class CInterpreterImpl implements CInterpreter {
                 Logger.getLogger(CInterpreterImpl.class.getName()).log(Level.SEVERE, null, ex);
                 throw new RuntimeException(
                         "TCC distribution for \"" + VSysUtil.getPlatformInfo()
-                        + "\" not available on the classpath!", ex);
+                                + "\" not available on the classpath!", ex);
             } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException ex) {
                 Logger.getLogger(CInterpreterImpl.class.getName()).log(Level.SEVERE, null, ex);
                 throw new RuntimeException(
                         "TCC distribution for \"" + VSysUtil.getPlatformInfo()
-                        + "\" does not contain valid build info!", ex);
+                                + "\" does not contain valid build info!", ex);
             }
 
             // if no previous timestamp exists or if no tcc folder exists
@@ -101,19 +103,19 @@ public class CInterpreterImpl implements CInterpreter {
                 confFile.setProperty("timestamp", timestampFromDist);
                 confFile.save();
             } else // we need to update the tcc distribution
-            if (!Objects.equals(timestamp, timestampFromDist)) {
-                System.out.println(
-                        " -> updating tcc in \"" + distDir + "\"");
-                System.out.println(" --> current version: " + timestamp);
-                System.out.println(" --> new     version: " + timestampFromDist);
-                TCCDist.extractTo(distDir.toFile());
-                confFile.setProperty("timestamp", timestampFromDist);
-                confFile.save();
-            } else {
+                if (!Objects.equals(timestamp, timestampFromDist)) {
+                    System.out.println(
+                            " -> updating tcc in \"" + distDir + "\"");
+                    System.out.println(" --> current version: " + timestamp);
+                    System.out.println(" --> new     version: " + timestampFromDist);
+                    TCCDist.extractTo(distDir.toFile());
+                    confFile.setProperty("timestamp", timestampFromDist);
+                    confFile.save();
+                } else {
                 /*System.out.println(
                         " -> tcc up to date in \"" + distDir + "\""
                 );*/
-            }
+                }
 
             executableFile = getExecutablePath(distDir);
 
@@ -126,18 +128,21 @@ public class CInterpreterImpl implements CInterpreter {
 
     @Override
     public CInterpreterImpl print(PrintStream out, PrintStream err) {
-        new StreamGobbler(err, tccProcess.getErrorStream(), "").start();
-        new StreamGobbler(out, tccProcess.getInputStream(), "").start();
+        errorGobbler = new StreamGobbler(err, tccProcess.getErrorStream(), "");
+        errorGobbler.start();
+        stdGobbler = new StreamGobbler(out, tccProcess.getInputStream(), "");
+        stdGobbler.start();
 
         return this;
     }
 
     @Override
     public CInterpreterImpl print() {
-        new StreamGobbler(System.err, tccProcess.getErrorStream(), "")
-                .start();
-        new StreamGobbler(System.out, tccProcess.getInputStream(), "")
-                .start();
+        errorGobbler = new StreamGobbler(System.err, tccProcess.getErrorStream(), "");
+        errorGobbler.start();
+
+        stdGobbler = new StreamGobbler(System.out, tccProcess.getInputStream(), "");
+        stdGobbler.start();
 
         return this;
     }
@@ -146,6 +151,10 @@ public class CInterpreterImpl implements CInterpreter {
     public CInterpreterImpl waitFor() {
         try {
             tccProcess.waitFor();
+            if(errorGobbler!=null) {
+                errorGobbler.join();
+                stdGobbler.join();
+            }
         } catch (InterruptedException ex) {
             Logger.getLogger(CInterpreterImpl.class.getName()).log(Level.SEVERE, null, ex);
             throw new RuntimeException("Cannot wait until process is finished", ex);
@@ -303,7 +312,7 @@ public class CInterpreterImpl implements CInterpreter {
         if (!VSysUtil.isOsSupported()) {
             throw new UnsupportedOperationException(
                     "The current OS is not supported: "
-                    + System.getProperty("os.name"));
+                            + System.getProperty("os.name"));
         }
 
         if (executableFile == null || !executableFile.isFile()) {
@@ -323,15 +332,15 @@ public class CInterpreterImpl implements CInterpreter {
             if (!VSysUtil.isWindows()) {
                 try {
                     Process p = Runtime.getRuntime().exec(new String[]{
-                        "chmod", "u+x",
-                        executableFile.getAbsolutePath()
+                            "chmod", "u+x",
+                            executableFile.getAbsolutePath()
                     });
 
                     InputStream stderr = p.getErrorStream();
 
                     BufferedReader reader
                             = new BufferedReader(
-                                    new InputStreamReader(stderr));
+                            new InputStreamReader(stderr));
 
                     String line;
 
@@ -385,9 +394,9 @@ public class CInterpreterImpl implements CInterpreter {
 
 class StreamGobbler extends Thread {
 
-    private final InputStream is;
-    private final String prefix;
-    private final PrintStream pw;
+    private  volatile InputStream is;
+    private  volatile String prefix;
+    private  volatile PrintStream pw;
 
     StreamGobbler(PrintStream pw, InputStream is, String prefix) {
         this.is = is;
@@ -408,4 +417,5 @@ class StreamGobbler extends Thread {
             ioe.printStackTrace(System.err);
         }
     }
+
 }
