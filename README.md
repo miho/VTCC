@@ -33,7 +33,7 @@ CInterpreter.execute(new File("main.c")).waitFor();
 ```
 The exit value can be accessed via:
 ```java
-// execute main.c with working directory "exampleDir"
+// execute main.c
 CInterpreter.execute(new File("main.c")).getProcess().exitValue();
 ```
 To destroy the current process, the `destroy()`method can be used:
