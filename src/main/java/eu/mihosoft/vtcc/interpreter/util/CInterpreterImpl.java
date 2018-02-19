@@ -13,16 +13,23 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+@Deprecated
 public class CInterpreterImpl implements CInterpreter {
 
     private static File executableFile;
     private static File tccRootPath;
     private final Process tccProcess;
     private static boolean initialized;
+
+    private final List<File> includeFolders = new ArrayList<>();
+    private final List<File> libraryFolders = new ArrayList<>();
+    private final List<String> libraries = new ArrayList<>();
 
     static {
         // static init
@@ -150,7 +157,7 @@ public class CInterpreterImpl implements CInterpreter {
     /**
      * Executes TCC with the specified script.
      *
-     * @param wd working directory
+     * @param wd working directory (currently ignored)
      * @param script script that shall be executed
      * @return this shell
      */
@@ -172,7 +179,7 @@ public class CInterpreterImpl implements CInterpreter {
     /**
      * Executes tcc with the specified script.
      *
-     * @param wd working directory
+     * @param wd working directory (currently ignored)
      * @param script script that shall be executed
      * @return this shell
      */
@@ -180,7 +187,7 @@ public class CInterpreterImpl implements CInterpreter {
 
         initialize();
 
-        Path scriptFile = null;
+        Path scriptFile;
 
         try {
             scriptFile = Files.createTempFile("tcc_script", ".c");
@@ -196,12 +203,32 @@ public class CInterpreterImpl implements CInterpreter {
             throw new RuntimeException("Cannot create tmp script-file", ex);
         }
 
-        Process proc = execute(
-                false, wd, "-run",
-                scriptFile.toAbsolutePath().toString());
+        String[] args;
+
+        if(VSysUtil.isWindows()) {
+
+            String tccFolder = executableFile.getAbsoluteFile().getParentFile().getParent();
+
+            args = new String[]{
+                    "-I" +tccFolder+"\\include\\libc;"+tccFolder+"\\include;" + tccFolder + "\\lib\\tcc\\include\\",
+                    "-nostdinc", "-nostdlib",
+                    "-run", scriptFile.toAbsolutePath().toString()};
+
+        } else {
+
+            String tccFolder = executableFile.getAbsoluteFile().getParentFile().getParent();
+
+            args = new String[]{"-B"+tccFolder+"/lib/tcc/",
+                    "-I" +tccFolder+"/include/libc:"+tccFolder+"/include:" + tccFolder + "/lib/tcc/include/",
+                    "-nostdinc", "-nostdlib",
+                    "-run", scriptFile.toAbsolutePath().toString()};
+        }
+
+        Process proc = execute(false, wd, args);
 
         return new CInterpreterImpl(proc, wd);
     }
+
 
     @Override
     public File getWorkingDirectory() {
@@ -212,7 +239,7 @@ public class CInterpreterImpl implements CInterpreter {
      * Calls tcc with the specified arguments.
      *
      * @param arguments arguments
-     * @param wd working directory
+     * @param wd working directory (currently ignored)
      * @param waitFor indicates whether to wait for process execution
      * @return tcc process
      */
@@ -235,7 +262,11 @@ public class CInterpreterImpl implements CInterpreter {
         Process proc = null;
 
         try {
-            proc = Runtime.getRuntime().exec(cmd, null, wd);
+            if(wd==null) {
+                proc = Runtime.getRuntime().exec(cmd);
+            } else {
+                proc = Runtime.getRuntime().exec(cmd, null, wd);
+            }
             if (waitFor) {
                 proc.waitFor();
             }
@@ -341,6 +372,14 @@ public class CInterpreterImpl implements CInterpreter {
     public static void saveStreamToFile(InputStream in, File f) throws IOException {
         IOUtil.saveStreamToFile(in, f);
     }
+
+    public static File getTCCRootPath() {
+        initialize();
+
+        return tccRootPath;
+    }
+
+
 }
 // based on http://stackoverflow.com/questions/14165517/processbuilder-forwarding-stdout-and-stderr-of-started-processes-without-blocki
 

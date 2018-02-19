@@ -27,19 +27,33 @@ public class TCCTest {
 
         String code = "" +
                 "#include <stdio.h>\n" +
+                "                  \n"+
                 "int main(int argc, char* argv[]) {\n" +
                 "  printf(\"Hello, World!\\n\");\n"+
                 "  return 0;\n"+
                 "}";
 
+//        code = "#include <stdio.h>\n" +
+//                "#include <unistd.h>\n" +
+//                "int main(int argc, char* argv[]) {\n" +
+//                "   char cwd[1024];\n" +
+//                "   if (getcwd(cwd, sizeof(cwd)) != NULL)\n" +
+//                "       printf(\"Current working dir: %s\\n\", cwd);\n" +
+//                "   else\n" +
+//                "       perror(\"getwd() error\");\n" +
+//                "   return 0;"+
+//                "}";
+
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PrintStream ps = new PrintStream(baos, true, "utf-8");
 
-        boolean noError = CInterpreter.execute(new File("./"), code).
+        boolean noError = CInterpreter.execute(code).
                 print(ps, System.err).waitFor().
                 getProcess().exitValue() == 0;
 
-        String output = new String(baos.toByteArray(), StandardCharsets.UTF_8);
+        String output = new String(baos.toByteArray(),
+                StandardCharsets.UTF_8);
+
         ps.close();
 
         System.out.println(output);

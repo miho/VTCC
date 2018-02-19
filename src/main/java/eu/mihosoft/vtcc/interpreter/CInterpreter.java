@@ -47,6 +47,14 @@ public interface CInterpreter {
      */
     CInterpreter print();
 
+    /* TODO 19.02.2018 add support for external headers and libraries
+    CInterpreter addIncludeFolder(File folder);
+
+    CInterpreter addLibraryFolder(File folder);
+
+    CInterpreter addLibrary(String libName);
+    */
+
     /**
      * Waits until the tcc process terminates.
      * @return this interpreter
@@ -56,18 +64,18 @@ public interface CInterpreter {
     /**
      * Executes tcc with the specified C script.
      *
-     * @param wd working directory
+     * @param wd working directory (currently ignored)
      * @param script script code that shall be executed
      * @return this interpreter
      */
-    public static CInterpreter execute(File wd, String script) {
+    static CInterpreter execute(File wd, String script) {
         return CInterpreterImpl.execute(wd, script);
     }
     
     /**
      * Executes tcc with the specified C script.
      * 
-     * @param wd working directory
+     * @param wd working directory (currently ignored)
      * @param script C script that shall be executed
      * @return this interpreter
      */
@@ -79,11 +87,48 @@ public interface CInterpreter {
      * Executes tcc with the specified arguments.
      *
      * @param arguments arguments
-     * @param wd working directory
+     * @param wd working directory  (currently ignored)
      * @return tcc process
      */
-    public static Process execute(File wd, String... arguments) {
+    static Process execute(File wd, String... arguments) {
         return CInterpreterImpl.execute(false, wd, arguments);
     }
-    
+    /**
+     * Executes tcc with the specified C script.
+     *
+     * @param script script code that shall be executed
+     * @return this interpreter
+     */
+    static CInterpreter execute(String script) {
+        return CInterpreterImpl.execute(null, script);
+    }
+
+    /**
+     * Executes tcc with the specified C script.
+     *
+     * @param script C script that shall be executed
+     * @return this interpreter
+     */
+    static CInterpreter execute(File script) {
+        return CInterpreterImpl.execute(null, script);
+    }
+
+    /**
+     * Executes tcc with the specified arguments.
+     *
+     * @param arguments arguments
+     * @return tcc process
+     */
+    static Process execute(String... arguments) {
+        return CInterpreterImpl.execute(false, null, arguments);
+    }
+
+    /**
+     * Returns the tcc installation folder.
+     *
+     * @return the tcc installation folder
+     */
+    static File getTCCInstallationFolder() {
+        return CInterpreterImpl.getTCCRootPath();
+    }
 }
