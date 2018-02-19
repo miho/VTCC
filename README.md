@@ -14,32 +14,32 @@ String code = "#include <stdio.h>\n" +
               "  printf(\"Hello, World!\\n\");\n"+
               "  return 0;\n"+
               "}";
-Shell.execute(exampleDir, code);
+CInterpreter.execute(exampleDir, code);
 ```
 To execute a specified C script, use:
 ```java
 // execute main.c with working directory "exampleDir"
-Shell.execute(exampleDir, new File(exampleDir, "main.c"));
+CInterpreter.execute(exampleDir, new File(exampleDir, "main.c"));
 ```
 To print the output to given print streams, use the `print(...)` method:
 ```java
 // execute main.c with working directory "exampleDir"
-Shell.execute(exampleDir, new File(exampleDir, "main.c")).print(System.out,System.err);
+CInterpreter.execute(exampleDir, new File(exampleDir, "main.c")).print(System.out,System.err);
 ```
 To wait until the execution has finished, use the `waitFor()` method:
 ```java
 // execute main.c with working directory "exampleDir"
-Shell.execute(exampleDir, new File(exampleDir, "main.c")).waitFor();
+CInterpreter.execute(exampleDir, new File(exampleDir, "main.c")).waitFor();
 ```
 The exit value can be accessed via:
 ```java
 // execute main.c with working directory "exampleDir"
-Shell.execute(exampleDir, new File(exampleDir, "main.c")).getProcess().exitValue();
+CInterpreter.execute(exampleDir, new File(exampleDir, "main.c")).getProcess().exitValue();
 ```
 To destroy the current process, the `destroy()`method can be used:
 ```java
 // execute main.c with working directory "exampleDir"
-Shell.execute(exampleDir, new File(exampleDir, "main.c")).destroy();
+CInterpreter.execute(exampleDir, new File(exampleDir, "main.c")).destroy();
 ```
 
 ## How to Build VTCC
@@ -59,7 +59,7 @@ by calling the `assemble` task.
 
 Navigate to the [Gradle](http://www.gradle.org/) project (e.g., `path/to/VTCC`) and enter the following command
 
-#### Bash (Linux/OS X/Cygwin/other Unix-like shell)
+#### Bash (Linux/OS X/Cygwin/other Unix-like CInterpreter)
 
     sh gradlew assemble
     

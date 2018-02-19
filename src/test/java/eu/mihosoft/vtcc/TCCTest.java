@@ -5,15 +5,14 @@
  */
 package eu.mihosoft.vtcc;
 
-import eu.mihosoft.vtcc.interpreter.Interpreter;
-import eu.mihosoft.vtcc.interpreter.util.InterpreterImpl;
+import eu.mihosoft.vtcc.interpreter.CInterpreter;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -36,7 +35,7 @@ public class TCCTest {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PrintStream ps = new PrintStream(baos, true, "utf-8");
 
-        boolean noError = Interpreter.execute(new File("./"), code).
+        boolean noError = CInterpreter.execute(new File("./"), code).
                 print(ps, System.err).waitFor().
                 getProcess().exitValue() == 0;
 

@@ -5,7 +5,7 @@
  */
 package eu.mihosoft.vtcc.interpreter;
 
-import eu.mihosoft.vtcc.interpreter.util.InterpreterImpl;
+import eu.mihosoft.vtcc.interpreter.util.CInterpreterImpl;
 import java.io.File;
 import java.io.PrintStream;
 
@@ -14,7 +14,7 @@ import java.io.PrintStream;
  * 
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
-public interface Interpreter {
+public interface CInterpreter {
 
     /**
      * Destroys the currently running tcc process.
@@ -39,19 +39,19 @@ public interface Interpreter {
      * @param err error output stream
      * @return this interpreter
      */
-    Interpreter print(PrintStream out, PrintStream err);
+    CInterpreter print(PrintStream out, PrintStream err);
 
     /**
      * Prints the tcc output to the standard output.
      * @return this interpreter
      */
-    Interpreter print();
+    CInterpreter print();
 
     /**
      * Waits until the tcc process terminates.
      * @return this interpreter
      */
-    Interpreter waitFor();
+    CInterpreter waitFor();
     
     /**
      * Executes tcc with the specified C script.
@@ -60,8 +60,8 @@ public interface Interpreter {
      * @param script script code that shall be executed
      * @return this interpreter
      */
-    public static Interpreter execute(File wd, String script) {
-        return InterpreterImpl.execute(wd, script);
+    public static CInterpreter execute(File wd, String script) {
+        return CInterpreterImpl.execute(wd, script);
     }
     
     /**
@@ -71,8 +71,8 @@ public interface Interpreter {
      * @param script C script that shall be executed
      * @return this interpreter
      */
-    static Interpreter execute(File wd, File script) {
-        return InterpreterImpl.execute(wd, script);
+    static CInterpreter execute(File wd, File script) {
+        return CInterpreterImpl.execute(wd, script);
     }
     
     /**
@@ -83,7 +83,7 @@ public interface Interpreter {
      * @return tcc process
      */
     public static Process execute(File wd, String... arguments) {
-        return InterpreterImpl.execute(false, wd, arguments);
+        return CInterpreterImpl.execute(false, wd, arguments);
     }
     
 }

@@ -1,6 +1,6 @@
 package eu.mihosoft.vtcc.interpreter.util;
 
-import eu.mihosoft.vtcc.interpreter.Interpreter;
+import eu.mihosoft.vtcc.interpreter.CInterpreter;
 import eu.mihosoft.vtcc.tccdist.TCCDist;
 import java.io.BufferedReader;
 import java.io.File;
@@ -17,7 +17,7 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class InterpreterImpl implements Interpreter {
+public class CInterpreterImpl implements CInterpreter {
 
     private static File executableFile;
     private static File tccRootPath;
@@ -29,7 +29,7 @@ public class InterpreterImpl implements Interpreter {
     }
     private final File wd;
 
-    private InterpreterImpl(Process proc, File wd) {
+    private CInterpreterImpl(Process proc, File wd) {
         this.tccProcess = proc;
         this.wd = wd;
     }
@@ -74,12 +74,12 @@ public class InterpreterImpl implements Interpreter {
                 timestampFromDistField.setAccessible(true);
                 timestampFromDist = (String) timestampFromDistField.get(buildInfoCls);
             } catch (ClassNotFoundException ex) {
-                Logger.getLogger(InterpreterImpl.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(CInterpreterImpl.class.getName()).log(Level.SEVERE, null, ex);
                 throw new RuntimeException(
                         "TCC distribution for \"" + VSysUtil.getPlatformInfo()
                         + "\" not available on the classpath!", ex);
             } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException ex) {
-                Logger.getLogger(InterpreterImpl.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(CInterpreterImpl.class.getName()).log(Level.SEVERE, null, ex);
                 throw new RuntimeException(
                         "TCC distribution for \"" + VSysUtil.getPlatformInfo()
                         + "\" does not contain valid build info!", ex);
@@ -111,14 +111,14 @@ public class InterpreterImpl implements Interpreter {
             executableFile = getExecutablePath(distDir);
 
         } catch (IOException ex) {
-            Logger.getLogger(InterpreterImpl.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CInterpreterImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         initialized = true;
     }
 
     @Override
-    public InterpreterImpl print(PrintStream out, PrintStream err) {
+    public CInterpreterImpl print(PrintStream out, PrintStream err) {
         new StreamGobbler(err, tccProcess.getErrorStream(), "").start();
         new StreamGobbler(out, tccProcess.getInputStream(), "").start();
 
@@ -126,7 +126,7 @@ public class InterpreterImpl implements Interpreter {
     }
 
     @Override
-    public InterpreterImpl print() {
+    public CInterpreterImpl print() {
         new StreamGobbler(System.err, tccProcess.getErrorStream(), "")
                 .start();
         new StreamGobbler(System.out, tccProcess.getInputStream(), "")
@@ -136,11 +136,11 @@ public class InterpreterImpl implements Interpreter {
     }
 
     @Override
-    public InterpreterImpl waitFor() {
+    public CInterpreterImpl waitFor() {
         try {
             tccProcess.waitFor();
         } catch (InterruptedException ex) {
-            Logger.getLogger(InterpreterImpl.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CInterpreterImpl.class.getName()).log(Level.SEVERE, null, ex);
             throw new RuntimeException("Cannot wait until process is finished", ex);
         }
 
@@ -154,7 +154,7 @@ public class InterpreterImpl implements Interpreter {
      * @param script script that shall be executed
      * @return this shell
      */
-    public static InterpreterImpl execute(File wd, String script) {
+    public static CInterpreterImpl execute(File wd, String script) {
         File tmpDir;
         File scriptFile;
         try {
@@ -162,7 +162,7 @@ public class InterpreterImpl implements Interpreter {
             scriptFile = new File(tmpDir, "code.c");
             Files.write(scriptFile.toPath(), script.getBytes("UTF-8"));
         } catch (IOException ex) {
-            Logger.getLogger(InterpreterImpl.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CInterpreterImpl.class.getName()).log(Level.SEVERE, null, ex);
             throw new RuntimeException("Cannot execute script due to io exception", ex);
         }
 
@@ -176,7 +176,7 @@ public class InterpreterImpl implements Interpreter {
      * @param script script that shall be executed
      * @return this shell
      */
-    public static InterpreterImpl execute(File wd, File script) {
+    public static CInterpreterImpl execute(File wd, File script) {
 
         initialize();
 
@@ -192,7 +192,7 @@ public class InterpreterImpl implements Interpreter {
                     scriptCode.getBytes(Charset.forName("UTF-8")));
 
         } catch (IOException ex) {
-            Logger.getLogger(InterpreterImpl.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CInterpreterImpl.class.getName()).log(Level.SEVERE, null, ex);
             throw new RuntimeException("Cannot create tmp script-file", ex);
         }
 
@@ -200,7 +200,7 @@ public class InterpreterImpl implements Interpreter {
                 false, wd, "-run",
                 scriptFile.toAbsolutePath().toString());
 
-        return new InterpreterImpl(proc, wd);
+        return new CInterpreterImpl(proc, wd);
     }
 
     @Override
@@ -310,7 +310,7 @@ public class InterpreterImpl implements Interpreter {
 
                     p.waitFor();
                 } catch (IOException | InterruptedException ex) {
-                    Logger.getLogger(InterpreterImpl.class.getName()).
+                    Logger.getLogger(CInterpreterImpl.class.getName()).
                             log(Level.SEVERE, null, ex);
                 }
             }
