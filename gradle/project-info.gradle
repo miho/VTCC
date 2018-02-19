@@ -10,7 +10,7 @@ ext.publishing.developerAlias        = 'miho'
 ext.publishing.developerEmail        = 'info@michaelhoffer.de'
 ext.publishing.inceptionYear         = '2018'
 
-ext.publishing.bintray.repo          = 'VTCC'
+ext.publishing.bintray.repo          = 'TCC'
 ext.publishing.bintray.userOrg       = 'miho'
 ext.publishing.bintray.name          = project.name
 
