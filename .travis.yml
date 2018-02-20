@@ -4,21 +4,26 @@ sudo: false
 #    packages:
 #      - oracle-java8-installer
 
-os:
-  - linux
-  - osx
+matrix:
+    include:
+    - os: linux
+      jdk:  oraclejdk8
+      install: true
+    - os: linux
+      jdk:  oraclejdk9
+      install: true
+    - os: osx
+      install: true
 
 language: java
 
-install: true
+
 
 #jdk:
 #  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then oraclejdk8; fi
 #  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then oraclejdk9; fi
 
 before_script:
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then jdk_switcher use oraclejdk9 ; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew tap caskroom/cask && brew cask install java8; fi
   - sh ./gradlew --version
   
 script:
