@@ -13,15 +13,11 @@ matrix:
       jdk:  oraclejdk9
       install: true
     - os: osx
-      install: true
+      osx_image: xcode9.2
+      install: brew tap caskroom/cask && brew cask info java
 
 language: java
 
-
-
-#jdk:
-#  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then oraclejdk8; fi
-#  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then oraclejdk9; fi
 
 before_script:
   - sh ./gradlew --version
