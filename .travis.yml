@@ -10,11 +10,11 @@ os:
 
 language: java
 
-install: true
+#install: true
 
 jdk:
-  - oraclejdk8
-  - oraclejdk9
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then oraclejdk8; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then oraclejdk9; fi
 
 before_script:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew tap caskroom/cask && brew install java; fi
