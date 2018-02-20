@@ -14,7 +14,7 @@ String code = "#include <stdio.h>\n" +
               "  printf(\"Hello, World!\\n\");\n"+
               "  return 0;\n"+
               "}";
-CInterpreter.execute(exampleDir, code);
+CInterpreter.execute(code);
 ```
 To execute a specified C script, use:
 ```java
