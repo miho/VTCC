@@ -16,6 +16,8 @@ import java.nio.charset.StandardCharsets;
 import org.junit.Assert;
 import org.junit.Test;
 
+import eu.mihosoft.vtcc.interpreter.util.VSysUtil;
+
 /**
  *
  * @author Michael Hoffer <info@michaelhoffer.de>
@@ -24,6 +26,11 @@ public class TCCTest {
 
     @Test
     public void executeExampleScriptTest() throws IOException {
+        
+        // show platform (os+arch)
+        String osAndArch = VSysUtil.getOSName() + ", " + VSysUtil.getArchName();
+        
+        System.out.println("OS-Info: "+ osAndArch);
 
         String code = "" +
                 "#include <stdio.h>\n" +
