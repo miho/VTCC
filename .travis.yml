@@ -10,7 +10,7 @@ os:
 
 language: java
 
-#install: true
+install: true
 
 #jdk:
 #  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then oraclejdk8; fi
