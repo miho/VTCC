@@ -8,7 +8,7 @@ Compile and Run C code from Java via embedded [TCC](https://bellard.org/tcc/) Co
 
 To execute C code, the following method can be used:
 ```java
-// execute code with working directory "exampleDir"
+// execute C code"
 String code = "#include <stdio.h>\n" +
               "int main(int argc, char* argv[]) {\n" +
               "  printf(\"Hello, World!\\n\");\n"+
@@ -28,7 +28,7 @@ CInterpreter.execute(new File("main.c")).print(System.out,System.err);
 ```
 To wait until the execution has finished, use the `waitFor()` method:
 ```java
-// execute main.c with working directory "exampleDir"
+// execute main.c and wait until exution finishes"
 CInterpreter.execute(new File("main.c")).waitFor();
 ```
 The exit value can be accessed via:
