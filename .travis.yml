@@ -15,6 +15,9 @@ matrix:
     - os: osx
       osx_image: xcode9.2
       install: brew tap caskroom/cask && brew cask info java && brew cask install java
+    - os: osx
+      osx_image: xcode9.2
+      install: true
 
 language: java
 
