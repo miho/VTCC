@@ -18,7 +18,7 @@ install: true
 
 before_script:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then jdk_switcher use oraclejdk9 ; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew tap caskroom/cask && brew cask install java9; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew tap caskroom/cask && brew cask install java8; fi
   - sh ./gradlew --version
   
 script:
