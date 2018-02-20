@@ -79,7 +79,8 @@ import java.util.logging.Logger;
  *
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
-class VSysUtil {
+@Deprecated
+public class VSysUtil {
 
     public static final String OS_LINUX = "Linux";
     public static final String OS_MAC = "Mac OS X";
