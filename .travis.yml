@@ -6,7 +6,7 @@ sudo: false
 
 os:
   - linux
- # - osx
+  - osx
 
 language: java
 
@@ -17,6 +17,7 @@ jdk:
   - oraclejdk9
 
 before_script:
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew tap caskroom/cask && brew install java; fi
   - sh ./gradlew --version
   
 script:
