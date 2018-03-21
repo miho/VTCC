@@ -59,7 +59,7 @@ by calling the `assemble` task.
 
 Navigate to the [Gradle](http://www.gradle.org/) project (e.g., `path/to/VTCC`) and enter the following command
 
-#### Bash (Linux/OS X/Cygwin/other Unix-like CInterpreter)
+#### Bash (Linux/OS X/Cygwin/other Unix-like Shell)
 
     sh gradlew assemble
     
