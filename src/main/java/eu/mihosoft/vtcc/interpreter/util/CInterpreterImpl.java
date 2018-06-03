@@ -240,10 +240,20 @@ public class CInterpreterImpl implements CInterpreter {
 
             String tccFolder = executableFile.getAbsoluteFile().getParentFile().getParent();
 
-            args = new String[]{"-B"+tccFolder+"/lib/tcc/",
+	    if(/*static arm binary does not seem to contain stdlib replacements*/ 
+			    VSysUtil.isLinux()
+			    &&VSysUtil.getArchName().contains("arm")) {
+            	 args = new String[]{"-B"+tccFolder+"/lib/tcc/",
                     "-I" +tccFolder+"/include/libc:"+tccFolder+"/include:" + tccFolder + "/lib/tcc/include/",
-                    "-nostdinc", /*static arm binary does not seem to contain stdlib replacements*/ VSysUtil.isLinux()&&VSysUtil.getArchName().contains("arm")?"":"-nostdlib",
+                    "-nostdinc",/* "-nostdlib", does not work on arm*/ 
                     "-run", scriptFile.toAbsolutePath().toString()};
+
+            } else {
+            	args = new String[]{"-B"+tccFolder+"/lib/tcc/",
+                    "-I" +tccFolder+"/include/libc:"+tccFolder+"/include:" + tccFolder + "/lib/tcc/include/",
+                    "-nostdinc", "-nostdlib",
+                    "-run", scriptFile.toAbsolutePath().toString()};
+	    }
         }
 
         Process proc = execute(false, wd, args);
