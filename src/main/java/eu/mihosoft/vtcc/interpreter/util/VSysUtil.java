@@ -120,7 +120,7 @@ public class VSysUtil {
 
         String archName = "x86";
 
-        if(osArch.contains("i386") || osArch.contains("i686") || osArch.contains("x86")) {
+        if( (osArch.contains("i386") || osArch.contains("i686") || osArch.contains("x86")) &&!osArch.contains("64")) {
             archName = "x86";
         } else if (osArch.contains("amd64") || osArch.contains("x86_64")) {
             archName = "x64";
