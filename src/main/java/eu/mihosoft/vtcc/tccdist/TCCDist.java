@@ -50,6 +50,7 @@ public class TCCDist {
             System.err.println("TCC distribution for \""
                     + VSysUtil.getPlatformInfo()
                     + "\" not available on the classpath!");
+            System.err.println("Platform path: " + resourceName);
 
             throw new RuntimeException(
                     "TCC distribution for \"" + VSysUtil.getPlatformInfo()
