@@ -2,6 +2,7 @@ package eu.mihosoft.vtcc.interpreter.util;
 
 import eu.mihosoft.vtcc.interpreter.CInterpreter;
 import eu.mihosoft.vtcc.tccdist.TCCDist;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -268,6 +269,9 @@ public class CInterpreterImpl implements CInterpreter {
         for (int i = 1; i < cmd.length; i++) {
             cmd[i] = arguments[i - 1];
         }
+
+        System.out.println(">> final tcc command: " + String.join(" ", cmd));
+        System.out.println(" -> cmd args:\n   -> " + String.join("\n   -> ", cmd));
 
         Process proc = null;
 
