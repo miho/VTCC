@@ -242,7 +242,7 @@ public class CInterpreterImpl implements CInterpreter {
 
             args = new String[]{"-B"+tccFolder+"/lib/tcc/",
                     "-I" +tccFolder+"/include/libc:"+tccFolder+"/include:" + tccFolder + "/lib/tcc/include/",
-                    "-nostdinc", "-nostdlib",
+                    "-nostdinc", /*static arm binary does not seem to contain stdlib replacements*/ VSysUtil.isLinux()&&VSysUtil.getArchName().contains("arm")?"":"-nostdlib",
                     "-run", scriptFile.toAbsolutePath().toString()};
         }
 
