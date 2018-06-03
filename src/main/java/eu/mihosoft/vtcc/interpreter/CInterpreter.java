@@ -60,6 +60,14 @@ public interface CInterpreter {
      * @return this interpreter
      */
     CInterpreter waitFor();
+
+
+    /**
+     * Enables debug output (for all subsequent interpreter calls).
+     */
+    static void debug() {
+        CInterpreterImpl.setGlobalDebug(true);
+    }
     
     /**
      * Executes tcc with the specified C script.

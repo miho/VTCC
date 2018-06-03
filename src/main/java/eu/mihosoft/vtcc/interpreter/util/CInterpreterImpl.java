@@ -25,6 +25,7 @@ public class CInterpreterImpl implements CInterpreter {
 
     private static File executableFile;
     private static File tccRootPath;
+    private static boolean globalDebug;
     private final Process tccProcess;
     private static boolean initialized;
     private StreamGobbler errorGobbler;
@@ -125,6 +126,14 @@ public class CInterpreterImpl implements CInterpreter {
         }
 
         initialized = true;
+    }
+
+    public static void setGlobalDebug(boolean b) {
+        CInterpreterImpl.globalDebug = true;
+    }
+
+    public static boolean isGlobalDebug() {
+        return globalDebug;
     }
 
     @Override
@@ -234,6 +243,7 @@ public class CInterpreterImpl implements CInterpreter {
             args = new String[]{"-B"+tccFolder+"/lib/tcc/",
                     "-I" +tccFolder+"/include/libc:"+tccFolder+"/include:" + tccFolder + "/lib/tcc/include/",
                     "-nostdinc", /*TODO 03.06.2018 does not work "-nostdlib" on static tcc binary and on macos,*/
+                    "-llibtcc",
                     "-run", scriptFile.toAbsolutePath().toString()};
         }
 
@@ -272,8 +282,10 @@ public class CInterpreterImpl implements CInterpreter {
             cmd[i] = arguments[i - 1];
         }
 
-        System.out.println(">> final tcc command: " + String.join(" ", cmd));
-        System.out.println(" -> cmd args:\n   -> " + String.join("\n   -> ", cmd));
+        if(isGlobalDebug()) {
+            System.out.println(">> final tcc command: " + String.join(" ", cmd));
+            System.out.println(" -> cmd args:\n   -> " + String.join("\n   -> ", cmd));
+        }
 
         Process proc = null;
 
