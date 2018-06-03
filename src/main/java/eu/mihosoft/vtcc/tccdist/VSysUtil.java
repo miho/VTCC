@@ -1,17 +1,17 @@
-/* 
+/*
  * VSysUtil.java
- * 
+ *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
  * Copyright (c) 2009–2012 Steinbeis Forschungszentrum (STZ Ölbronn),
  * Copyright (c) 2006–2012 by Michael Hoffer
- * 
+ *
  * This file is part of Visual Reflection Library (VRL).
  *
  * VRL is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
  * as published by the Free Software Foundation.
- * 
+ *
  * see: http://opensource.org/licenses/LGPL-3.0
  *      file://path/to/VRL/src/eu/mihosoft/vrl/resources/license/lgplv3.txt
  *
@@ -32,14 +32,14 @@
  *
  * First, the following text must be displayed on the Canvas:
  * "based on VRL source code". In this case the VRL canvas icon must be removed.
- * 
+ *
  * Second, the copyright notice must remain. It must be reproduced in any
  * program that uses VRL.
  *
  * Third, add an additional notice, stating that you modified VRL. In addition
  * you must cite the publications listed below. A suitable notice might read
  * "VRL source code modified by YourName 2012".
- * 
+ *
  * Note, that these requirements are in full accordance with the LGPL v3
  * (see 7. Additional Terms, b).
  *
@@ -61,10 +61,14 @@ import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -75,7 +79,8 @@ import java.util.logging.Logger;
  *
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
-class VSysUtil {
+@Deprecated
+public class VSysUtil {
 
     public static final String OS_LINUX = "Linux";
     public static final String OS_MAC = "Mac OS X";
@@ -83,10 +88,13 @@ class VSysUtil {
     public static final String OS_OTHER = "Other";
     public static final String[] SUPPORTED_OPERATING_SYSTEMS = {OS_LINUX, OS_MAC, OS_WINDOWS};
     public static final String[] SUPPORTED_ARCHITECTURES = {
-        "x86", "i386", "i686", // 32 bit (equivalent)
-        "x86_64", "amd64"};    // 64 bit (equivalent)
+            "x86", "i386", "i686",            // 32 bit (equivalent)
+            "x86_64", "amd64",                // 64 bit (equivalent)
+            "arm", "armeabi-v7a", "aarch32",  // 32 bit (equivalent)
+            "arm64", "aarch64", "arm64-v8a"   // 64 bit (equivalent)
+    };
 
-    // no instanciation allowed
+    // no instantiation allowed
     private VSysUtil() {
         throw new AssertionError(); // not in this class either!
     }
@@ -107,13 +115,17 @@ class VSysUtil {
         String osArch = System.getProperty("os.arch");
 
         if (!isArchSupported()) {
-            return "generic";
+            return "unsupported_"+osArch;
         }
 
         String archName = "x86";
 
-        if (osArch.contains("64")) {
+        if(osArch.contains("i386") || osArch.contains("i686") || osArch.contains("x86")) {
+            archName = "x86";
+        } else if (osArch.contains("amd64")) {
             archName = "x64";
+        } else if(osArch.contains("arm") && osArch.contains("64") || osArch.equals("aarch64")) {
+            archName = "arm64";
         }
 
         return archName;
@@ -124,7 +136,7 @@ class VSysUtil {
      * <code>linux</code> or
      * <code>osx</code> or
      * <code>windows</code> or
-     * <code>generic</code>.
+     * <code>unsupported_$osname</code>.
      *
      * <p><b>Note:</b> names returned by this method are compatible with native
      * library and resource locations for VRL and VRL plugins.</p>
@@ -143,7 +155,7 @@ class VSysUtil {
             return "windows";
         }
 
-        return "generic";
+        return "generic_"+osName;
     }
 
     /**
@@ -157,16 +169,18 @@ class VSysUtil {
         String result = "";
 
         String osName = System.getProperty("os.name");
+
         String archFolder = getArchName() + "/";
+
 
         if (osName.contains("Linux")) {
             result += "linux/" + archFolder;
         } else if (osName.contains("Mac OS X")) {
-            result += "osx/";
+            result += "macos/";
         } else if (osName.contains("Windows")) {
             result += "windows/" + archFolder;
         } else {
-            result += "generic/";
+            result += "unsupported_"+osName+"/";
         }
 
         return result;
@@ -232,6 +246,99 @@ class VSysUtil {
                 + " (" + arch + ")";
     }
 
+    /**
+     * Loads all native libraries in the specified folder and optionally all of
+     * its subfolders. Please ensure that all libraries in the folder are
+     * compatible with the current os. The folder must contain all library
+     * dependencies.
+     *
+     * @param folder library folder
+     * @param recursive defines whether recursively load libraries from sub
+     * folders
+     *
+     * @return <code>true</code> if all native libraries could be loaded;
+     * <code>false</code> otherwise
+     */
+    public static boolean loadNativeLibrariesInFolder(File folder, boolean recursive) {
+        VParamUtil.throwIfNotValid(
+                VParamUtil.VALIDATOR_EXISTING_FOLDER, folder);
+
+        final String dylibEnding = "." + VSysUtil.getPlatformSpecificLibraryEnding();
+
+        Collection<File> dynamicLibraries = new ArrayList<File>();
+
+        if (recursive) {
+            dynamicLibraries.addAll(
+                    IOUtil.listFiles(folder, new String[]{dylibEnding}));
+        } else {
+            File[] libFiles = folder.listFiles((dir, name) -> name.endsWith(dylibEnding));
+            dynamicLibraries.addAll(Arrays.asList(libFiles));
+        }
+
+        System.out.println(">> loading native libraries:");
+
+        ArrayList<String> loadedLibraries = new ArrayList<String>();
+        ArrayList<String> errorLibraries = new ArrayList<String>();
+
+        int lastSize = -1;
+
+        while (loadedLibraries.size() > lastSize) {
+
+            lastSize = loadedLibraries.size();
+
+            for (File f : dynamicLibraries) {
+
+                String libName = f.getAbsolutePath();
+
+                if (!loadedLibraries.contains(libName)) {
+//                    System.out.println(" --> " + f.getName());
+                    try {
+                        System.load(libName);
+                        loadedLibraries.add(libName);
+                    } catch (Exception ex) {
+                        ex.printStackTrace(System.err);
+                    } catch (UnsatisfiedLinkError ex) {
+                        ex.printStackTrace(System.err);
+                    }
+                }
+            }
+        }
+
+        boolean errors = loadedLibraries.size() != dynamicLibraries.size();
+
+        for (File f : dynamicLibraries) {
+            if (!loadedLibraries.contains(f.getAbsolutePath())) {
+                errorLibraries.add(f.getName());
+            }
+        }
+
+        System.out.println(" --> done.");
+
+        if (errors) {
+            System.err.println(">> Not Loaded:");
+
+            for (String loadedLib : errorLibraries) {
+                System.err.println("--> " + loadedLib);
+            }
+        }
+
+
+        return !errors;
+    }
+
+    /**
+     * Loads all native librarties in the specified folder and all of its
+     * subfolders. Please ensure that all libraries in the folder are compatible
+     * with the current os.
+     *
+     * @param folder library folder
+     *
+     * @return <code>true</code> if all native libraries could be loaded;
+     * <code>false</code> otherwise
+     */
+    public static boolean loadNativeLibrariesInFolder(File folder) {
+        return loadNativeLibrariesInFolder(folder, true);
+    }
 
     /**
      * Returns the binary path to system executables. The path depends on the OS
@@ -349,7 +456,7 @@ class VSysUtil {
          */
         @Override
         public void lostOwnership(Clipboard aClipboard,
-                Transferable aContents) {
+                                  Transferable aContents) {
             //do nothing
         }
 
@@ -378,7 +485,7 @@ class VSysUtil {
             Transferable contents = clipboard.getContents(null);
             boolean hasTransferableText =
                     (contents != null)
-                    && contents.isDataFlavorSupported(DataFlavor.stringFlavor);
+                            && contents.isDataFlavorSupported(DataFlavor.stringFlavor);
             if (hasTransferableText) {
                 try {
                     result = (String) contents.getTransferData(
@@ -421,7 +528,7 @@ class VSysUtil {
             field.set(null, tmp);
             System.setProperty("java.library.path",
                     System.getProperty("java.library.path")
-                    + File.pathSeparator + path);
+                            + File.pathSeparator + path);
         } catch (IllegalAccessException e) {
             throw new IOException("Failed to get permissions to set library path");
         } catch (NoSuchFieldException e) {

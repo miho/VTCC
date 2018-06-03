@@ -88,10 +88,13 @@ public class VSysUtil {
     public static final String OS_OTHER = "Other";
     public static final String[] SUPPORTED_OPERATING_SYSTEMS = {OS_LINUX, OS_MAC, OS_WINDOWS};
     public static final String[] SUPPORTED_ARCHITECTURES = {
-        "x86", "i386", "i686", // 32 bit (equivalent)
-        "x86_64", "amd64"};    // 64 bit (equivalent)
+        "x86", "i386", "i686",            // 32 bit (equivalent)
+        "x86_64", "amd64",                // 64 bit (equivalent)
+        "arm", "armeabi-v7a", "aarch32",  // 32 bit (equivalent)
+        "aarch64", "arm64-v8a"            // 64 bit (equivalent)
+    };
 
-    // no instanciation allowed
+    // no instantiation allowed
     private VSysUtil() {
         throw new AssertionError(); // not in this class either!
     }
@@ -112,13 +115,17 @@ public class VSysUtil {
         String osArch = System.getProperty("os.arch");
 
         if (!isArchSupported()) {
-            return "generic";
+            return "unsupported_"+osArch;
         }
 
         String archName = "x86";
 
-        if (osArch.contains("64")) {
+        if(osArch.contains("i386") || osArch.contains("i686") || osArch.contains("x86")) {
+            archName = "x86";
+        } else if (osArch.contains("amd64")) {
             archName = "x64";
+        } else if(osArch.contains("arm") && osArch.contains("64") || osArch.equals("aarch64")) {
+            archName = "arm64";
         }
 
         return archName;
@@ -129,7 +136,7 @@ public class VSysUtil {
      * <code>linux</code> or
      * <code>osx</code> or
      * <code>windows</code> or
-     * <code>generic</code>.
+     * <code>unsupported_$osname</code>.
      *
      * <p><b>Note:</b> names returned by this method are compatible with native
      * library and resource locations for VRL and VRL plugins.</p>
@@ -148,7 +155,7 @@ public class VSysUtil {
             return "windows";
         }
 
-        return "generic";
+        return "generic_"+osName;
     }
 
     /**
@@ -173,7 +180,7 @@ public class VSysUtil {
         } else if (osName.contains("Windows")) {
             result += "windows/" + archFolder;
         } else {
-            result += "generic/";
+            result += "unsupported_"+osName+"/";
         }
 
         return result;
@@ -264,12 +271,7 @@ public class VSysUtil {
             dynamicLibraries.addAll(
                     IOUtil.listFiles(folder, new String[]{dylibEnding}));
         } else {
-            File[] libFiles = folder.listFiles(new FilenameFilter() {
-                @Override
-                public boolean accept(File dir, String name) {
-                    return name.endsWith(dylibEnding);
-                }
-            });
+            File[] libFiles = folder.listFiles((dir, name) -> name.endsWith(dylibEnding));
             dynamicLibraries.addAll(Arrays.asList(libFiles));
         }
 
