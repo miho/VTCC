@@ -150,7 +150,7 @@ public class VSysUtil {
         if (osName.contains("Linux")) {
             return "linux";
         } else if (osName.contains("Mac OS X")) {
-            return "macos";
+            return "osx";
         } else if (osName.contains("Windows")) {
             return "windows";
         }
@@ -176,7 +176,7 @@ public class VSysUtil {
         if (osName.contains("Linux")) {
             result += "linux/" + archFolder;
         } else if (osName.contains("Mac OS X")) {
-            result += "macos/";
+            result += "osx/";
         } else if (osName.contains("Windows")) {
             result += "windows/" + archFolder;
         } else {
