@@ -242,7 +242,7 @@ public class CInterpreterImpl implements CInterpreter {
 
             args = new String[]{"-B"+tccFolder+"/lib/tcc/",
                     "-I" +tccFolder+"/include/libc:"+tccFolder+"/include:" + tccFolder + "/lib/tcc/include/",
-                    "-nostdinc", /*TODO 03.06.2018 does not work "-nostdlib" on static tcc binary and on macos,*/
+                    "-nostdinc", "-nostdlib",
                     "-run", scriptFile.toAbsolutePath().toString()};
         }
 
