@@ -88,10 +88,10 @@ public class VSysUtil {
     public static final String OS_OTHER = "Other";
     public static final String[] SUPPORTED_OPERATING_SYSTEMS = {OS_LINUX, OS_MAC, OS_WINDOWS};
     public static final String[] SUPPORTED_ARCHITECTURES = {
-        "x86", "i386", "i686",            // 32 bit (equivalent)
-        "x86_64", "amd64",                // 64 bit (equivalent)
-        "arm", "armeabi-v7a", "aarch32",  // 32 bit (equivalent)
-        "aarch64", "arm64-v8a"            // 64 bit (equivalent)
+            "x86", "i386", "i686",            // 32 bit (equivalent)
+            "x86_64", "amd64",                // 64 bit (equivalent)
+            "arm", "armeabi-v7a", "aarch32",  // 32 bit (equivalent)
+            "arm64", "aarch64", "arm64-v8a"   // 64 bit (equivalent)
     };
 
     // no instantiation allowed
@@ -103,7 +103,7 @@ public class VSysUtil {
      * Returns the architecture name, i.e.,
      * <code>x64</code> or
      * <code>x86</code> or
-     * <code>generic</code>.
+     * <code>unsupported_$osarch</code>.
      *
      * <p><b>Note:</b> names returned by this method are compatible with native
      * library and resource locations for VRL and VRL plugins.</p>
@@ -122,7 +122,7 @@ public class VSysUtil {
 
         if(osArch.contains("i386") || osArch.contains("i686") || osArch.contains("x86")) {
             archName = "x86";
-        } else if (osArch.contains("amd64")) {
+        } else if (osArch.contains("amd64") || osArch.contains("x86_64")) {
             archName = "x64";
         } else if(osArch.contains("arm") && osArch.contains("64") || osArch.equals("aarch64")) {
             archName = "arm64";
@@ -456,7 +456,7 @@ public class VSysUtil {
          */
         @Override
         public void lostOwnership(Clipboard aClipboard,
-                Transferable aContents) {
+                                  Transferable aContents) {
             //do nothing
         }
 
@@ -485,7 +485,7 @@ public class VSysUtil {
             Transferable contents = clipboard.getContents(null);
             boolean hasTransferableText =
                     (contents != null)
-                    && contents.isDataFlavorSupported(DataFlavor.stringFlavor);
+                            && contents.isDataFlavorSupported(DataFlavor.stringFlavor);
             if (hasTransferableText) {
                 try {
                     result = (String) contents.getTransferData(
@@ -528,7 +528,7 @@ public class VSysUtil {
             field.set(null, tmp);
             System.setProperty("java.library.path",
                     System.getProperty("java.library.path")
-                    + File.pathSeparator + path);
+                            + File.pathSeparator + path);
         } catch (IllegalAccessException e) {
             throw new IOException("Failed to get permissions to set library path");
         } catch (NoSuchFieldException e) {

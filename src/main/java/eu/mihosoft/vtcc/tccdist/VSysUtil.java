@@ -103,7 +103,7 @@ public class VSysUtil {
      * Returns the architecture name, i.e.,
      * <code>x64</code> or
      * <code>x86</code> or
-     * <code>generic</code>.
+     * <code>unsupported_$osarch</code>.
      *
      * <p><b>Note:</b> names returned by this method are compatible with native
      * library and resource locations for VRL and VRL plugins.</p>
@@ -122,7 +122,7 @@ public class VSysUtil {
 
         if(osArch.contains("i386") || osArch.contains("i686") || osArch.contains("x86")) {
             archName = "x86";
-        } else if (osArch.contains("amd64")) {
+        } else if (osArch.contains("amd64") || osArch.contains("x86_64")) {
             archName = "x64";
         } else if(osArch.contains("arm") && osArch.contains("64") || osArch.equals("aarch64")) {
             archName = "arm64";
