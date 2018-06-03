@@ -34,7 +34,7 @@ repositories {
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.10'
-    testCompile group: 'eu.mihosoft.vtcc.tccdist', name: 'tcc-dist', version: '2018.2.0'
+    testCompile group: 'eu.mihosoft.vtcc.tccdist', name: 'tcc-dist', version: '2018.2.1'
 }
 
 //task run(type: JavaExec) {
