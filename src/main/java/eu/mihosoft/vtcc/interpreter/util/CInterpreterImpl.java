@@ -231,7 +231,7 @@ public class CInterpreterImpl implements CInterpreter {
 
             args = new String[]{"-B"+tccFolder+"/lib/tcc/",
                     "-I" +tccFolder+"/include/libc:"+tccFolder+"/include:" + tccFolder + "/lib/tcc/include/",
-                    "-nostdinc", "-nostdlib",
+                    "-nostdinc", /*TODO 03.06.2018 does not work "-nostdlib" on static tcc binary and on macos,*/
                     "-run", scriptFile.toAbsolutePath().toString()};
         }
 
@@ -270,8 +270,8 @@ public class CInterpreterImpl implements CInterpreter {
             cmd[i] = arguments[i - 1];
         }
 
-        System.out.println(">> final tcc command: " + String.join(" ", cmd));
-        System.out.println(" -> cmd args:\n   -> " + String.join("\n   -> ", cmd));
+        // System.out.println(">> final tcc command: " + String.join(" ", cmd));
+        // System.out.println(" -> cmd args:\n   -> " + String.join("\n   -> ", cmd));
 
         Process proc = null;
 
