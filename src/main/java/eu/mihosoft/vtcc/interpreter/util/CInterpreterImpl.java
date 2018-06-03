@@ -154,6 +154,8 @@ public class CInterpreterImpl implements CInterpreter {
             tccProcess.waitFor();
             if(errorGobbler!=null) {
                 errorGobbler.join();
+            }
+            if(stdGobbler!=null) {
                 stdGobbler.join();
             }
         } catch (InterruptedException ex) {
