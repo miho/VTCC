@@ -68,6 +68,14 @@ public interface CInterpreter {
     static void debug() {
         CInterpreterImpl.setGlobalDebug(true);
     }
+
+    /**
+     * Enables debug output (for all subsequent interpreter calls).
+     * @param b state to set
+     */
+    static void debug(boolean b) {
+        CInterpreterImpl.setGlobalDebug(b);
+    }
     
     /**
      * Executes tcc with the specified C script.

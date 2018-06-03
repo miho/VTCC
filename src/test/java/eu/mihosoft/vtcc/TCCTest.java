@@ -54,6 +54,8 @@ public class TCCTest {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PrintStream ps = new PrintStream(baos, true, "utf-8");
 
+        CInterpreter.debug();
+
         boolean noError = CInterpreter.execute(code).
                 print(ps, System.err).waitFor().
                 getProcess().exitValue() == 0;
