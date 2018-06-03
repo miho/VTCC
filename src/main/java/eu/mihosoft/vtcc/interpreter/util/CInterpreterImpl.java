@@ -272,8 +272,8 @@ public class CInterpreterImpl implements CInterpreter {
             cmd[i] = arguments[i - 1];
         }
 
-        // System.out.println(">> final tcc command: " + String.join(" ", cmd));
-        // System.out.println(" -> cmd args:\n   -> " + String.join("\n   -> ", cmd));
+        System.out.println(">> final tcc command: " + String.join(" ", cmd));
+        System.out.println(" -> cmd args:\n   -> " + String.join("\n   -> ", cmd));
 
         Process proc = null;
 
