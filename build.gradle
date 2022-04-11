@@ -1,9 +1,8 @@
 plugins {
 //    id 'com.github.hierynomus.license' version '0.13.1'
     id 'maven-publish'
-    id 'net.nemerosa.versioning' version '2.4.0'
-    id 'com.jfrog.bintray' version '1.7.2'
-    id 'com.github.ben-manes.versions' version '0.13.0'
+    id "net.nemerosa.versioning" version "2.15.1"
+    id 'com.github.ben-manes.versions' version '0.42.0'
 }
 
 apply plugin: 'java'
@@ -16,8 +15,8 @@ tasks.withType(Javadoc) {
     options.addStringOption('Xdoclint:none', '-quiet')
 }
 
-task wrapper(type: Wrapper, description: 'Creates and deploys the Gradle wrapper to the current directory.') {
-    gradleVersion = '4.5.1'
+wrapper {
+    gradleVersion = '7.4.2'
 }
 
 //if (!hasProperty('mainClass')) {
@@ -33,8 +32,8 @@ repositories {
 }
 
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.10'
-    testCompile group: 'eu.mihosoft.vtcc.tccdist', name: 'tcc-dist', version: '2018.2.3'
+    testImplementation group: 'junit', name: 'junit', version: '4.13'
+    testImplementation group: 'eu.mihosoft.vtcc.tccdist', name: 'tcc-dist', version: '2018.2.3'
 }
 
 //task run(type: JavaExec) {
